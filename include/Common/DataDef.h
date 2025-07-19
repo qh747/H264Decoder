@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <cstdint>
 
 namespace Common {
@@ -28,6 +29,89 @@ typedef enum class NALU_TYPE : uint8_t {
     SubsetSPS       = 0x0f,
 
 } Nalu_t;
+
+/**
+ * @brief NALU SEI载荷类型
+ */
+typedef enum class NALU_SEI_PAYLOAD_TYPE : uint8_t {
+    buffering_period                            = 0,
+    picture_timing                              = 1,
+    pain_scan_rect                              = 2,
+    filler_payload                              = 3,
+    user_data_registered_itu_t_t35              = 4,
+    user_data_unregistered                      = 5,
+    recovery_point                              = 6,
+    dec_ref_pic_marking_repetition              = 7,
+    spare_pic                                   = 8,
+    scene_info                                  = 9,
+    sub_seq_info                                = 10,
+    sub_seq_layer_characteristics               = 11,
+    sub_seq_characteristics                     = 12,
+    full_frame_freeze                           = 13,
+    full_frame_freeze_release                   = 14,
+    full_frame_snapshot                         = 15,
+    progressive_refinement_segment_start        = 16,
+    progressive_refinement_segment_end          = 17,
+    motion_constrained_slice_group_set          = 18,
+    film_grain_characteristics                  = 19,
+    deblocking_filter_display_preference        = 20,
+    stereo_video_info                           = 21,
+    post_filter_hint                            = 22,
+    tone_mapping_info                           = 23,
+    scalability_info                            = 24,
+    sub_pic_scalable_layers                     = 25,
+    non_required_layer_rep                      = 26,
+    priority_layer_info                         = 27,
+    layers_not_present                          = 28,
+    layer_dependency_change                     = 29,
+    scalable_nesting                            = 30,
+    base_layer_temporal_hrd                     = 31,
+    quality_layer_integrity_check               = 32,
+    redundant_pic_property                      = 33,
+    tl0_dep_rep_index                           = 34,
+    tl_switching_point                          = 35,
+    parallel_decoding_info                      = 36,
+    mvc_scalable_nesting                        = 37,
+    view_scalability_info                       = 38,
+    multiple_view_scene_info                    = 39,
+    multiview_acquisition_info                  = 40,
+    non_required_view_components                = 41,
+    view_dependency_change                      = 42,
+    operation_points_not_present                = 43,
+    base_view_temporal_hrd                      = 44,
+    frame_packing_arrangement                   = 45,
+    multiview_view_position                     = 46,
+    display_orientation                         = 47,
+    mvcd_scalable_nesting                       = 48,
+    mvcd_view_scalability_info                  = 49,
+    depth_representation_info                   = 50,
+    three_dimensional_reference_displays_info   = 51,
+    depth_timing                                = 52,
+    depth_sampling_info                         = 53,
+    constrained_depth_parameter_set_identifier  = 54,
+    green_metadata                              = 56,
+    mastering_display_colour_volume             = 137,
+    colour_remapping_info                       = 142,
+    content_light_level_info                    = 144,
+    alternative_transfer_characteristics        = 147,
+    ambient_viewing_environment                 = 148,
+    content_colour_volume                       = 149,
+    equirectangular_projection                  = 150,
+    cubemap_projection                          = 151,
+    sphere_rotation                             = 154,
+    regionwise_packing                          = 155,
+    omni_viewport                               = 156,
+    alternative_depth_info                      = 181,
+    sei_manifestation                           = 200,
+    sei_prefix_indication                       = 201,
+    annotated_regions                           = 202,
+    shutter_interval_info                       = 205,
+    nn_post_filter_characteristics              = 210,
+    nn_post_filter_activation                   = 211,
+    phase_indication                            = 212,
+    reserved_sei_message                        = 255,
+
+} NaluSeiPt_t;
 
 /**
  * @brief SPS Vui Hrd参数
@@ -183,5 +267,15 @@ typedef struct PPS_PARAMETER_DATA_TYPE {
     int             second_chroma_qp_index_offset { 0 };
 
 } PPSParam_dt;
+
+/**
+ * @brief SEI参数
+ */
+typedef struct SEI_PARAMETER_DATA_TYPE {
+    uint32_t                payload_type { 0 };
+    uint32_t                payload_size { 0 };
+    std::vector<uint8_t>    payload_data { 0 };
+
+} SEIParam_dt;
 
 }; // namespace Common

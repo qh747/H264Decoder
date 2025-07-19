@@ -1,6 +1,10 @@
 # H264 Decoder
 H264 Decoder
 
+# H264 Standard
+
+ITU-T H264 (v15) (08/2024) Advanced video coding for generic audiovisual services
+
 # Compile Option
 
 ``` cmd

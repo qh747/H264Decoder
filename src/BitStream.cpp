@@ -38,4 +38,20 @@ int BitStream::readNBits(std::size_t count) {
     return ret;
 }
 
+int BitStream::seekNBits(std::size_t count) {
+    // 暂存当前读取的位置和比特偏移量
+    auto currPos = m_pos;
+    auto currBitOffset = m_bitOffset;
+
+    // 读取指定比特数
+    int ret = this->readNBits(count);
+
+    // 恢复读取位置和比特偏移量
+    m_pos = currPos;
+    m_bitOffset = currBitOffset;
+
+    // 返回读取的比特数
+    return ret;
+}
+
 } // namespace Common

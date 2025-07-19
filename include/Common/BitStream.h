@@ -26,6 +26,13 @@ public:
      */
     int readNBits(std::size_t count);
 
+    /**
+     * @brief  获取n个比特位
+     * @return 比特位值
+     * @param  count 读取比特位个数
+     */
+    int seekNBits(std::size_t count);
+
 public:
     // 获取当前读取位置
     inline std::size_t getPos() const {

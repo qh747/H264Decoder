@@ -15,6 +15,7 @@ public:
      * @brief  解析PPS
      * @return 解析结果
      * @param  buffer PPS数据
+     * @param  sps    SPS数据
      */
     bool parse(const std::vector<uint8_t>& buffer, const NaluSPS& sps);
 
@@ -25,6 +26,9 @@ public:
     std::string dumpString() const;
 
 public:
+    // 判断数据单元是否解析成功
+    bool m_isValid { false };
+
     // pps参数
     Common::PPSParam_dt m_ppsParam;
 };

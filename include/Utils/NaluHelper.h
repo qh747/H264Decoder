@@ -19,4 +19,5 @@ public:
     // ITU-T H.264 (V15) E.1.1 VUI parameters syntax
     static void ParseVuiParam(AnnexB::NaluStream& ns, Common::SPSVuiParam_dt& vuiParam);
 };
+
 }; // namespace Utils

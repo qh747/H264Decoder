@@ -55,8 +55,6 @@ void FuncTestPPS() {
                 }
 
                 std::cout << nalu.dumpString();
-                std::cout << sps.dumpResolution();
-                std::cout << sps.dumpString();
                 std::cout << pps.dumpString();
             }
 

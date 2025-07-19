@@ -165,10 +165,15 @@ bool NaluSPS::parse(const std::vector<uint8_t>& buffer) {
         NaluHelper::ParseVuiParam(ns, m_spsParam.vui);
     }
 
+    m_isValid = true;
     return true;
 }
 
 std::string NaluSPS::dumpString() const {
+    if (!m_isValid) {
+        return "";
+    }
+
     std::stringstream ss;
     ss << "SPS ========================" << std::endl;
     ss << "profile_idc: " << static_cast<int>(m_spsParam.profile_idc) << std::endl;
@@ -405,6 +410,10 @@ std::string NaluSPS::dumpString() const {
 }
 
 std::string NaluSPS::dumpResolution() const {
+    if (!m_isValid) {
+        return "";
+    }
+
     auto width = (m_spsParam.pic_width_in_mbs_minus1 + 1) * 16;
     auto height = (m_spsParam.pic_height_in_map_units_minus1 + 1) * 16;
 

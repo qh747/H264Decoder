@@ -94,11 +94,16 @@ bool NaluPPS::parse(const std::vector<uint8_t>& buffer, const NaluSPS& sps)
         m_ppsParam.second_chroma_qp_index_offset = ns.readSev();
     }
 
+    m_isValid = true;
     return true;
 }
 
 std::string NaluPPS::dumpString() const
 {
+    if (!m_isValid) {
+        return "";
+    }
+
     std::stringstream ss;
     ss << "PPS ========================" << std::endl;
     ss << "pic_parameter_set_id: " << m_ppsParam.pic_parameter_set_id << std::endl;
