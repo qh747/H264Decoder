@@ -1,7 +1,7 @@
 #include <cstdint>
 #include <iostream>
-#include <AnnexB/NaluStream.h>
-using namespace AnnexB;
+#include <Stream/NaluStream.h>
+using namespace Stream;
 
 // 测试NaluStream类
 void FuncTestNaluStream() {

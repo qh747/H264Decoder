@@ -1,9 +1,9 @@
 #pragma once
-#include "Common/BitStream.h"
+#include "Stream/BitStream.h"
 
-namespace AnnexB {
+namespace Stream {
 
-class NaluStream : public Common::BitStream {
+class NaluStream : public Stream::BitStream {
 public:
     NaluStream(const uint8_t* buffer, std::size_t size);
     ~NaluStream() override = default;
@@ -22,4 +22,4 @@ public:
     int readSev();
 };
 
-}; // namespace AnnexB
+}; // namespace Stream

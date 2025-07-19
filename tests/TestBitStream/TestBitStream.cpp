@@ -1,7 +1,7 @@
 #include <cstdint>
 #include <iostream>
-#include <Common/BitStream.h>
-using namespace Common;
+#include <Stream/BitStream.h>
+using namespace Stream;
 
 // 测试BitStream类
 void FuncTestBitStream() {

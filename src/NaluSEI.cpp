@@ -3,11 +3,12 @@
 #include <iostream>
 #include "Utils/NaluHelper.h"
 #include "Utils/StringHelper.h"
-#include "AnnexB/NaluStream.h"
+#include "Stream/NaluStream.h"
 #include "AnnexB/NaluSEI.h"
 using Common::Nalu_t;
 using Utils::NaluHelper;
 using Utils::StringHelper;
+using Stream::NaluStream;
 
 namespace AnnexB {
 

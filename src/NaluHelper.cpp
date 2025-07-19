@@ -1,9 +1,9 @@
-#include "AnnexB/NaluStream.h"
+#include "Stream/NaluStream.h"
 #include "Utils/NaluHelper.h"
 
 namespace Utils {
 
-void NaluHelper::ParseScalingList(AnnexB::NaluStream& ns, int* scalingList, int sizeOfScalingList, int* useDefaultScalingMatrixFlag) {
+void NaluHelper::ParseScalingList(Stream::NaluStream& ns, int* scalingList, int sizeOfScalingList, int* useDefaultScalingMatrixFlag) {
     int lastScale = 8;
     int nextScale = 8;
 
@@ -19,7 +19,7 @@ void NaluHelper::ParseScalingList(AnnexB::NaluStream& ns, int* scalingList, int 
     }
 }
 
-void NaluHelper::ParseHrdParam(AnnexB::NaluStream& ns, Common::SPSVuiHrdParam_dt& hrdParam) {
+void NaluHelper::ParseHrdParam(Stream::NaluStream& ns, Common::SPSVuiHrdParam_dt& hrdParam) {
     hrdParam.cpb_cnt_minus1 = ns.readUev();
     hrdParam.bit_rate_scale = ns.readNBits(4);
     hrdParam.cpb_size_scale = ns.readNBits(4);
@@ -36,7 +36,7 @@ void NaluHelper::ParseHrdParam(AnnexB::NaluStream& ns, Common::SPSVuiHrdParam_dt
     hrdParam.time_offset_length                      = ns.readNBits(5);
 }
 
-void NaluHelper::ParseVuiParam(AnnexB::NaluStream& ns, Common::SPSVuiParam_dt& vuiParam) {
+void NaluHelper::ParseVuiParam(Stream::NaluStream& ns, Common::SPSVuiParam_dt& vuiParam) {
     vuiParam.aspect_ratio_info_present_flag = ns.readOneBit();
 
     if(vuiParam.aspect_ratio_info_present_flag) {

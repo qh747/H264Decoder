@@ -2,12 +2,13 @@
 #include <sstream>
 #include <iostream>
 #include "Utils/NaluHelper.h"
-#include "AnnexB/NaluStream.h"
+#include "Stream/NaluStream.h"
 #include "AnnexB/NaluSPS.h"
 using Common::Nalu_t;
 using Common::SPSVuiParam_dt;
 using Common::SPSVuiHrdParam_dt;
 using Utils::NaluHelper;
+using Stream::NaluStream;
 
 namespace AnnexB {
 

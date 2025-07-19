@@ -2,7 +2,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace Common {
+namespace Stream {
 
 /**
  * @brief 比特流读取类
@@ -70,4 +70,4 @@ protected:
     const std::vector<uint8_t> m_buffer;
 };
 
-}; // namespace Common
+}; // namespace Stream

@@ -1,6 +1,6 @@
-#include "Common/BitStream.h"
+#include "Stream/BitStream.h"
 
-namespace Common {
+namespace Stream {
 
 BitStream::BitStream(const uint8_t* buffer, std::size_t size) : m_buffer(buffer, buffer + size) {
 
@@ -54,4 +54,4 @@ int BitStream::seekNBits(std::size_t count) {
     return ret;
 }
 
-} // namespace Common
+} // namespace Stream

@@ -1,7 +1,6 @@
-#include "AnnexB/NaluStream.h"
-using Common::BitStream;
+#include "Stream/NaluStream.h"
 
-namespace AnnexB {
+namespace Stream {
 
 NaluStream::NaluStream(const uint8_t* buffer, std::size_t size) : BitStream(buffer, size) {
 
@@ -67,4 +66,4 @@ int NaluStream::readSev() {
     return sign == 0 ? ret : -ret;
 }
 
-} // namespace AnnexB
+} // namespace Stream
