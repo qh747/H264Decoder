@@ -4,6 +4,7 @@
 #include <cstdint>
 #include "Common/DataDef.h"
 #include "AnnexB/NaluSPS.h"
+
 namespace AnnexB {
 
 /**

@@ -27,8 +27,24 @@ typedef enum class NALU_TYPE : uint8_t {
     SPSExt          = 0x0d,
     PrefixNalUnit   = 0x0e,
     SubsetSPS       = 0x0f,
+    DepthParamSet   = 0x10,
+    AuxiliarySlice  = 0x13,
+    CodedSliceExt   = 0x14,
+    CodedSliceExt2  = 0x15,
 
 } Nalu_t;
+
+/**
+ * @brief NALU Slice类型
+ */
+typedef enum class SLICE_TYPE : uint8_t {
+    P_SLICE         = 0,
+    B_SLICE         = 1,
+    I_SLICE         = 2,
+    SP_SLICE        = 3,
+    SI_SLICE        = 4,
+
+} Slice_t;
 
 /**
  * @brief NALU SEI载荷类型
@@ -234,37 +250,37 @@ typedef struct SPS_PARAMETER_DATA_TYPE {
  * @brief PPS参数
  */
 typedef struct PPS_PARAMETER_DATA_TYPE {
-    uint32_t        pic_parameter_set_id { 0 };
-    uint32_t        seq_parameter_set_id { 0 };
-    uint8_t         entropy_coding_mode_flag { 0 };
-    uint8_t         bottom_field_pic_order_in_frame_present_flag { 0 };
-    uint32_t        num_slice_groups_minus1 { 0 };
-    uint32_t        slice_group_map_type { 0 };
-    uint32_t        run_length_minus1[8] { 0 };
-    uint32_t        top_left[8] { 0 };
-    uint32_t        bottom_right[8] { 0 };
-    uint8_t         slice_group_change_direction_flag { 0 };
-    uint32_t        slice_group_change_rate_minus1 { 0 };
-    uint32_t        pic_size_in_map_units_minus1 { 0 };
-    uint8_t         slice_group_id[256] { 0 };
-    uint32_t        num_ref_idx_l0_default_active_minus1 { 0 };
-    uint32_t        num_ref_idx_l1_default_active_minus1 { 0 };
-    uint8_t         weighted_pred_flag { 0 };
-    uint16_t        weighted_bipred_idc { 0 };
-    int             pic_init_qp_minus26 { 0 };
-    int             pic_init_qs_minus26 { 0 };
-    int             chroma_qp_index_offset { 0 };
-    uint8_t         deblocking_filter_control_present_flag { 0 };
-    uint8_t         constrained_intra_pred_flag { 0 };
-    uint8_t         redundant_pic_cnt_present_flag { 0 };
-    uint8_t         transform_8x8_mode_flag { 0 };
-    uint8_t         pic_scaling_matrix_present_flag { 0 };
-    uint8_t         pic_scaling_list_present_flag[12] { 0 };
-    int             scaling_list_4x4[6][16] { 0 };
-    int             use_default_scaling_matrix_4x4_flag[6] { 0 };
-    int             scaling_list_8x8[6][64] { 0 };
-    int             use_default_scaling_matrix_8x8_flag[6] { 0 };
-    int             second_chroma_qp_index_offset { 0 };
+    uint32_t                pic_parameter_set_id { 0 };
+    uint32_t                seq_parameter_set_id { 0 };
+    uint8_t                 entropy_coding_mode_flag { 0 };
+    uint8_t                 bottom_field_pic_order_in_frame_present_flag { 0 };
+    uint32_t                num_slice_groups_minus1 { 0 };
+    uint32_t                slice_group_map_type { 0 };
+    uint32_t                run_length_minus1[8] { 0 };
+    uint32_t                top_left[8] { 0 };
+    uint32_t                bottom_right[8] { 0 };
+    uint8_t                 slice_group_change_direction_flag { 0 };
+    uint32_t                slice_group_change_rate_minus1 { 0 };
+    uint32_t                pic_size_in_map_units_minus1 { 0 };
+    uint8_t                 slice_group_id[256] { 0 };
+    uint32_t                num_ref_idx_l0_default_active_minus1 { 0 };
+    uint32_t                num_ref_idx_l1_default_active_minus1 { 0 };
+    uint8_t                 weighted_pred_flag { 0 };
+    uint16_t                weighted_bipred_idc { 0 };
+    int                     pic_init_qp_minus26 { 0 };
+    int                     pic_init_qs_minus26 { 0 };
+    int                     chroma_qp_index_offset { 0 };
+    uint8_t                 deblocking_filter_control_present_flag { 0 };
+    uint8_t                 constrained_intra_pred_flag { 0 };
+    uint8_t                 redundant_pic_cnt_present_flag { 0 };
+    uint8_t                 transform_8x8_mode_flag { 0 };
+    uint8_t                 pic_scaling_matrix_present_flag { 0 };
+    uint8_t                 pic_scaling_list_present_flag[12] { 0 };
+    int                     scaling_list_4x4[6][16] { 0 };
+    int                     use_default_scaling_matrix_4x4_flag[6] { 0 };
+    int                     scaling_list_8x8[6][64] { 0 };
+    int                     use_default_scaling_matrix_8x8_flag[6] { 0 };
+    int                     second_chroma_qp_index_offset { 0 };
 
 } PPSParam_dt;
 
@@ -274,8 +290,95 @@ typedef struct PPS_PARAMETER_DATA_TYPE {
 typedef struct SEI_PARAMETER_DATA_TYPE {
     uint32_t                payload_type { 0 };
     uint32_t                payload_size { 0 };
-    std::vector<uint8_t>    payload_data { 0 };
+    std::vector<uint8_t>    payload_data;
 
 } SEIParam_dt;
+
+/**
+ * @brief Slice Header ref_pic_list_modification 参数
+ */
+typedef struct REF_PIC_LIST_MODIFICATION_PARAMETER_DATA_TYPE {
+    uint8_t                 ref_pic_list_modification_flag_l0 { 0 };
+    uint32_t                modification_of_pic_nums_idc { 0 };
+    uint32_t                abs_diff_pic_num_minus1 { 0 };
+    uint32_t                long_term_pic_num { 0 };
+    uint8_t                 ref_pic_list_modification_flag_l1 { 0 };
+
+} RefPicListModParam_dt;
+
+/**
+ * @brief Slice Header pred_weight_table 参数
+ */
+typedef struct PRED_WEIGHT_TABLE_PARAMETER_DATA_TYPE {
+    uint32_t                luma_log2_weight_denom { 0 };
+    uint32_t                chroma_log2_weight_denom { 0 };
+
+    uint8_t                 luma_weight_l0_flag { 0 };
+    int32_t                 luma_weight_l0[32] { 0 };
+    int32_t                 luma_offset_l0[32] { 0 };
+
+    uint8_t                 chroma_weight_l0_flag { 0 };
+    int32_t                 chroma_weight_l0[32][2] { 0 };
+    int32_t                 chroma_offset_l0[32][2] { 0 };
+
+    uint8_t                 luma_weight_l1_flag { 0 };
+    int32_t                 luma_weight_l1[32] { 0 };
+    int32_t                 luma_offset_l1[32] { 0 };
+
+    uint8_t                 chroma_weight_l1_flag { 0 };
+    int32_t                 chroma_weight_l1[32][2] { 0 };
+    int32_t                 chroma_offset_l1[32][2] { 0 };
+
+} PredWeightTableParam_dt;
+
+/**
+ * @brief Slice Header dec_ref_pic_marking 参数
+ */
+typedef struct DEC_REF_PIC_MARKING_PARAMETER_DATA_TYPE {
+    uint8_t                 no_output_of_prior_pics_flag { 0 };
+    uint8_t                 long_term_reference_flag { 0 };
+    uint8_t                 adaptive_ref_pic_marking_mode_flag { 0 };
+    uint32_t                memory_management_control_operation { 0 };
+    uint32_t                difference_of_pic_nums_minus1 { 0 };
+    uint32_t                long_term_pic_num { 0 };
+    uint32_t                long_term_frame_idx { 0 };
+    uint32_t                max_long_term_frame_idx_plus1 { 0 };
+
+} DecRefPicMarkParam_dt;
+
+/**
+ * @brief Slice Header参数
+ */
+typedef struct SLICE_HEADER_PARAMETER_DATA_TYPE {
+    uint32_t                first_mb_in_slice { 0 };
+    uint32_t                slice_type { 0 };
+    uint32_t                pic_parameter_set_id { 0 };
+    uint16_t                colour_plane_id { 0 };
+    uint32_t                frame_num { 0 };
+    uint8_t                 field_pic_flag { 0 };
+    uint8_t                 bottom_field_flag { 0 };
+    uint32_t                idr_pic_id { 0 };
+    uint32_t                pic_order_cnt_lsb { 0 };
+    int16_t                 delta_pic_order_cnt_bottom { 0 };
+    int16_t                 delta_pic_order_cnt[2] { 0 };
+    uint32_t                redundant_pic_cnt { 0 };
+    uint8_t                 direct_spatial_mv_pred_flag { 0 };
+    uint8_t                 num_ref_idx_active_override_flag { 0 };
+    uint32_t                num_ref_idx_l0_active_minus1 { 0 };
+    uint32_t                num_ref_idx_l1_active_minus1 { 0 };
+    uint32_t                cabac_init_idc { 0 };
+    int32_t                 slice_qp_delta { 0 };
+    uint8_t                 sp_for_switch_flag { 0 };
+    int32_t                 slice_qs_delta { 0 };
+    uint32_t                disable_deblocking_filter_idc { 0 };
+    int32_t                 slice_alpha_c0_offset_div2 { 0 };
+    int32_t                 slice_beta_offset_div2 { 0 };
+    uint32_t                slice_group_change_cycle { 0 };
+
+    RefPicListModParam_dt   ref_pic_list_modification;
+    PredWeightTableParam_dt pred_weight_table;
+    DecRefPicMarkParam_dt   dec_ref_pic_marking;
+
+} SliceHeadParam_dt;
 
 }; // namespace Common

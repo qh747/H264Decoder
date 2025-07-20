@@ -107,4 +107,141 @@ void NaluHelper::ParseVuiParam(Stream::NaluStream& ns, Common::SPSVuiParam_dt& v
     }
 }
 
+bool NaluHelper::GetSliceType(uint32_t value, Common::Nalu_t type, uint32_t maxNumRefFrames, Common::Slice_t& ret) {
+    value = value > 4 ? value % 5 : value;
+    ret = static_cast<Common::Slice_t>(value);
+
+    if (Common::Nalu_t::IDRSlice == type && Common::Slice_t::I_SLICE != ret && Common::Slice_t::SI_SLICE != ret) {
+        // When nal_unit_type is equal to 5 (IDR picture), slice_type shall be equal to 2, 4, 7, or 9
+        return false;
+    }
+
+    if (0 == maxNumRefFrames && Common::Slice_t::I_SLICE != ret && Common::Slice_t::SI_SLICE != ret) {
+        // When max_num_ref_frames is equal to 0, slice_type shall be equal to 2, 4, 7, or 9
+        return false;
+    }
+
+    return true;
+}
+
+void NaluHelper::ParseRefPicListModification(Stream::NaluStream& ns, Common::Slice_t slice, Common::SliceHeadParam_dt& sliceHeader) {
+    auto& refPicListModParam = sliceHeader.ref_pic_list_modification;
+
+    if (Common::Slice_t::I_SLICE != slice && Common::Slice_t::SI_SLICE!= slice) {
+        refPicListModParam.ref_pic_list_modification_flag_l0 = ns.readOneBit();
+        if (0 != refPicListModParam.ref_pic_list_modification_flag_l0) {
+            do {
+                refPicListModParam.modification_of_pic_nums_idc = ns.readUev();
+                if (0 == refPicListModParam.modification_of_pic_nums_idc || 1 == refPicListModParam.modification_of_pic_nums_idc)  {
+                    refPicListModParam.abs_diff_pic_num_minus1 = ns.readUev();
+                }
+                else if (2 == refPicListModParam.modification_of_pic_nums_idc) {
+                    refPicListModParam.long_term_pic_num = ns.readUev();
+                }
+
+            } while(3 != refPicListModParam.modification_of_pic_nums_idc);
+        }
+    }
+
+    if (Common::Slice_t::B_SLICE == slice) {
+        refPicListModParam.ref_pic_list_modification_flag_l1 = ns.readOneBit();
+        if (0 != refPicListModParam.ref_pic_list_modification_flag_l1) {
+            do {
+                refPicListModParam.modification_of_pic_nums_idc = ns.readUev();
+                if (0 == refPicListModParam.modification_of_pic_nums_idc || 1 == refPicListModParam.modification_of_pic_nums_idc)  {
+                    refPicListModParam.abs_diff_pic_num_minus1 = ns.readUev();
+                }
+                else if (2 == refPicListModParam.modification_of_pic_nums_idc) {
+                    refPicListModParam.long_term_pic_num = ns.readUev();
+                }
+
+            } while(3!= refPicListModParam.modification_of_pic_nums_idc);
+        }
+    }
+}
+
+void NaluHelper::ParsePredWeightTable(Stream::NaluStream& ns, Common::Slice_t slice, uint32_t chromaArrayType,
+    Common::SliceHeadParam_dt& sliceHeader) {
+    auto& predWeightTableParam = sliceHeader.pred_weight_table;
+
+    predWeightTableParam.luma_log2_weight_denom = ns.readUev();
+
+    if (0 == chromaArrayType) {
+        predWeightTableParam.chroma_log2_weight_denom = ns.readUev();
+    }
+
+    for (auto idx = 0; idx <= sliceHeader.num_ref_idx_l0_active_minus1; ++idx) {
+        predWeightTableParam.luma_weight_l0_flag = ns.readOneBit();
+        if (0 != predWeightTableParam.luma_weight_l0_flag) {
+            predWeightTableParam.luma_weight_l0[idx] = ns.readSev();
+            predWeightTableParam.luma_offset_l0[idx] = ns.readSev();
+        }
+
+        if (0 != chromaArrayType) {
+            predWeightTableParam.chroma_weight_l0_flag = ns.readOneBit();
+            if (0 != predWeightTableParam.chroma_weight_l0_flag) {
+                for (auto jdx = 0; jdx < 2; ++jdx) {
+                    predWeightTableParam.chroma_weight_l0[idx][jdx] = ns.readSev();
+                    predWeightTableParam.chroma_offset_l0[idx][jdx] = ns.readSev();
+                }
+            }
+        }
+    }
+
+    if (Common::Slice_t::B_SLICE == slice) {
+        for (auto idx = 0; idx <= sliceHeader.num_ref_idx_l1_active_minus1; ++idx) {
+            predWeightTableParam.luma_weight_l1_flag = ns.readOneBit();
+            if (0 != predWeightTableParam.luma_weight_l1_flag) {
+                predWeightTableParam.luma_weight_l1[idx] = ns.readSev();
+                predWeightTableParam.luma_offset_l1[idx] = ns.readSev();
+            }
+
+            if (0 != chromaArrayType) {
+                predWeightTableParam.chroma_weight_l1_flag = ns.readOneBit();
+                if (0 != predWeightTableParam.chroma_weight_l1_flag) {
+                    for (auto jdx = 0; jdx < 2; ++jdx) {
+                        predWeightTableParam.chroma_weight_l1[idx][jdx] = ns.readSev();
+                        predWeightTableParam.chroma_offset_l1[idx][jdx] = ns.readSev();
+                    }
+                }
+            }
+        }
+    }
+}
+
+void NaluHelper::ParseDecRefPisMark(Stream::NaluStream& ns, Common::Nalu_t type, Common::SliceHeadParam_dt& sliceHeader) {
+    auto& decRefPicMarkingParam = sliceHeader.dec_ref_pic_marking;
+
+    if (Common::Nalu_t::IDRSlice == type) {
+        decRefPicMarkingParam.no_output_of_prior_pics_flag = ns.readOneBit();
+        decRefPicMarkingParam.long_term_reference_flag = ns.readOneBit();
+    }
+    else {
+        decRefPicMarkingParam.adaptive_ref_pic_marking_mode_flag = ns.readOneBit();
+        if (0 != decRefPicMarkingParam.adaptive_ref_pic_marking_mode_flag) {
+            do {
+                decRefPicMarkingParam.memory_management_control_operation = ns.readUev();
+                if (1 == decRefPicMarkingParam.memory_management_control_operation ||
+                    3 == decRefPicMarkingParam.memory_management_control_operation) {
+                    decRefPicMarkingParam.difference_of_pic_nums_minus1 = ns.readUev();
+                }
+
+                if (2 == decRefPicMarkingParam.memory_management_control_operation) {
+                    decRefPicMarkingParam.long_term_pic_num = ns.readUev();
+                }
+
+                if (3 == decRefPicMarkingParam.memory_management_control_operation ||
+                    6 == decRefPicMarkingParam.memory_management_control_operation) {
+                    decRefPicMarkingParam.long_term_frame_idx = ns.readUev();
+                }
+
+                if (4 == decRefPicMarkingParam.memory_management_control_operation) {
+                    decRefPicMarkingParam.max_long_term_frame_idx_plus1 = ns.readUev();
+                }
+
+            } while(0 != decRefPicMarkingParam.memory_management_control_operation);
+        }
+    }
+}
+
 } // namespace Utils

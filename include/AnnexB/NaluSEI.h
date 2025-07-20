@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include "Common/DataDef.h"
+
 namespace AnnexB {
 
 /**

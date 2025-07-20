@@ -185,55 +185,46 @@ std::string NaluSPS::dumpString() const {
 
     ss << "level_idc: " << static_cast<int>(m_spsParam.level_idc) << std::endl;
     ss << "seq_parameter_set_id: " << m_spsParam.seq_parameter_set_id << std::endl;
+    ss << "chroma_format_idc: " << m_spsParam.chroma_format_idc << std::endl;
+    ss << "separate_colour_plane_flag: " << static_cast<int>(m_spsParam.separate_colour_plane_flag) << std::endl;
+    ss << "bit_depth_luma_minus8: " << m_spsParam.bit_depth_luma_minus8 << std::endl;
+    ss << "bit_depth_chroma_minus8: " << m_spsParam.bit_depth_chroma_minus8 << std::endl;
+    ss << "qpprime_y_zero_transform_bypass_flag: " << static_cast<int>(m_spsParam.qpprime_y_zero_transform_bypass_flag) << std::endl;
+    ss << "seq_scaling_matrix_present_flag: " << static_cast<int>(m_spsParam.seq_scaling_matrix_present_flag) << std::endl;
 
-    if (HighProfileIdcSet.end() != HighProfileIdcSet.find(m_spsParam.profile_idc)) {
-        ss << "chroma_format_idc: " << m_spsParam.chroma_format_idc << std::endl;
-        if (3 == m_spsParam.chroma_format_idc) {
-            ss << "separate_colour_plane_flag: " << static_cast<int>(m_spsParam.separate_colour_plane_flag) << std::endl;
-        }
-
-        ss << "bit_depth_luma_minus8: " << m_spsParam.bit_depth_luma_minus8 << std::endl;
-        ss << "bit_depth_chroma_minus8: " << m_spsParam.bit_depth_chroma_minus8 << std::endl;
-
-        ss << "qpprime_y_zero_transform_bypass_flag: " << static_cast<int>(m_spsParam.qpprime_y_zero_transform_bypass_flag) << std::endl;
-        ss << "seq_scaling_matrix_present_flag: " << static_cast<int>(m_spsParam.seq_scaling_matrix_present_flag) << std::endl;
-
-        if (0 != m_spsParam.seq_scaling_matrix_present_flag) {
-            ss << "seq_scaling_list_present_flag: ";
-            for (auto idx : m_spsParam.seq_scaling_list_present_flag) {
-                ss << static_cast<int>(idx) << " ";
-            }
-            ss << std::endl;
-
-            ss << "scaling_list_4x4: " << std::endl;
-            for (const auto& idx : m_spsParam.scaling_list_4x4) {
-                for (int jdx : idx) {
-                    ss << jdx << " ";
-                }
-                ss << std::endl;
-            }
-
-            ss << "use_default_scaling_matrix_4x4_flag: ";
-            for (int idx : m_spsParam.use_default_scaling_matrix_4x4_flag) {
-                ss << idx << " ";
-            }
-            ss << std::endl;
-
-            ss << "scaling_list_8x8: " << std::endl;
-            for (const auto& idx : m_spsParam.scaling_list_8x8) {
-                for (int jdx : idx) {
-                    ss << jdx << " ";
-                }
-                ss << std::endl;
-            }
-
-            ss << "use_default_scaling_matrix_8x8_flag: ";
-            for (int idx : m_spsParam.use_default_scaling_matrix_8x8_flag) {
-                ss << idx << " ";
-            }
-            ss << std::endl;
-        }
+    ss << "seq_scaling_list_present_flag: ";
+    for (auto idx : m_spsParam.seq_scaling_list_present_flag) {
+        ss << static_cast<int>(idx) << " ";
     }
+    ss << std::endl;
+
+    ss << "scaling_list_4x4: " << std::endl;
+    for (const auto& idx : m_spsParam.scaling_list_4x4) {
+        for (int jdx : idx) {
+            ss << jdx << " ";
+        }
+        ss << std::endl;
+    }
+
+    ss << "use_default_scaling_matrix_4x4_flag: ";
+    for (int idx : m_spsParam.use_default_scaling_matrix_4x4_flag) {
+        ss << idx << " ";
+    }
+    ss << std::endl;
+
+    ss << "scaling_list_8x8: " << std::endl;
+    for (const auto& idx : m_spsParam.scaling_list_8x8) {
+        for (int jdx : idx) {
+            ss << jdx << " ";
+        }
+        ss << std::endl;
+    }
+
+    ss << "use_default_scaling_matrix_8x8_flag: ";
+    for (int idx : m_spsParam.use_default_scaling_matrix_8x8_flag) {
+        ss << idx << " ";
+    }
+    ss << std::endl;
 
     ss << "log2_max_frame_num_minus4: " << m_spsParam.log2_max_frame_num_minus4 << std::endl;
     ss << "pic_order_cnt_type: " << m_spsParam.pic_order_cnt_type << std::endl;
@@ -259,153 +250,107 @@ std::string NaluSPS::dumpString() const {
     ss << "pic_width_in_mbs_minus1: " << m_spsParam.pic_width_in_mbs_minus1 << std::endl;
     ss << "pic_height_in_map_units_minus1: " << m_spsParam.pic_height_in_map_units_minus1 << std::endl;
     ss << "frame_mbs_only_flag: " << static_cast<int>(m_spsParam.frame_mbs_only_flag) << std::endl;
-
-    if (0 == m_spsParam.frame_mbs_only_flag) {
-        ss << "mb_adaptive_frame_field_flag: " << static_cast<int>(m_spsParam.mb_adaptive_frame_field_flag) << std::endl;
-    }
-
+    ss << "mb_adaptive_frame_field_flag: " << static_cast<int>(m_spsParam.mb_adaptive_frame_field_flag) << std::endl;
     ss << "direct_8x8_inference_flag: " << static_cast<int>(m_spsParam.direct_8x8_inference_flag) << std::endl;
     ss << "frame_cropping_flag: " << static_cast<int>(m_spsParam.frame_cropping_flag) << std::endl;
 
-    if (m_spsParam.frame_cropping_flag) {
-        ss << "frame_crop_left_offset: " << m_spsParam.frame_crop_left_offset << std::endl;
-        ss << "frame_crop_right_offset: " << m_spsParam.frame_crop_right_offset << std::endl;
-        ss << "frame_crop_top_offset: " << m_spsParam.frame_crop_top_offset << std::endl;
-        ss << "frame_crop_bottom_offset: " << m_spsParam.frame_crop_bottom_offset << std::endl;
-    }
+    ss << "frame_crop_left_offset: " << m_spsParam.frame_crop_left_offset << std::endl;
+    ss << "frame_crop_right_offset: " << m_spsParam.frame_crop_right_offset << std::endl;
+    ss << "frame_crop_top_offset: " << m_spsParam.frame_crop_top_offset << std::endl;
+    ss << "frame_crop_bottom_offset: " << m_spsParam.frame_crop_bottom_offset << std::endl;
 
     ss << "vui_parameters_present_flag: " << static_cast<int>(m_spsParam.vui_parameters_present_flag) << std::endl;
 
-    if (0 != m_spsParam.vui_parameters_present_flag) {
-        ss << "VUI -------------------" << std::endl;
+    ss << "VUI -------------------" << std::endl;
+    ss << "aspect_ratio_info_present_flag: " << static_cast<int>(m_spsParam.vui.aspect_ratio_info_present_flag) << std::endl;
+    ss << "aspect_ratio_idc: " << m_spsParam.vui.aspect_ratio_idc << std::endl;
+    ss << "sar_width: " << m_spsParam.vui.sar_width << std::endl;
+    ss << "sar_height: " << m_spsParam.vui.sar_height << std::endl;
+    ss << "overscan_info_present_flag: " << static_cast<int>(m_spsParam.vui.overscan_info_present_flag) << std::endl;
+    ss << "overscan_appropriate_flag: " << static_cast<int>(m_spsParam.vui.overscan_appropriate_flag) << std::endl;
+    ss << "video_signal_type_present_flag: " << static_cast<int>(m_spsParam.vui.video_signal_type_present_flag) << std::endl;
+    ss << "video_format: " << m_spsParam.vui.video_format << std::endl;
+    ss << "video_full_range_flag: " << static_cast<int>(m_spsParam.vui.video_full_range_flag) << std::endl;
+    ss << "colour_description_present_flag: " << static_cast<int>(m_spsParam.vui.colour_description_present_flag) << std::endl;
+    ss << "colour_primaries: " << m_spsParam.vui.colour_primaries << std::endl;
+    ss << "transfer_characteristics: " << m_spsParam.vui.transfer_characteristics << std::endl;
+    ss << "matrix_coefficients: " << m_spsParam.vui.matrix_coefficients << std::endl;
+    ss << "chroma_loc_info_present_flag: " << static_cast<int>(m_spsParam.vui.chroma_loc_info_present_flag) << std::endl;
+    ss << "chroma_sample_loc_type_top_field: " << m_spsParam.vui.chroma_sample_loc_type_top_field << std::endl;
+    ss << "chroma_sample_loc_type_bottom_field: " << m_spsParam.vui.chroma_sample_loc_type_bottom_field << std::endl;
 
-        ss << "aspect_ratio_info_present_flag: " << static_cast<int>(m_spsParam.vui.aspect_ratio_info_present_flag) << std::endl;
+    ss << "timing_info_present_flag: " << static_cast<int>(m_spsParam.vui.timing_info_present_flag) << std::endl;
+    ss << "num_units_in_tick: " << m_spsParam.vui.num_units_in_tick << std::endl;
+    ss << "time_scale: " << m_spsParam.vui.time_scale << std::endl;
+    ss << "fixed_frame_rate_flag: " << static_cast<int>(m_spsParam.vui.fixed_frame_rate_flag) << std::endl;
+    ss << "nal_hrd_parameters_present_flag: " << static_cast<int>(m_spsParam.vui.nal_hrd_parameters_present_flag) << std::endl;
 
-        if (0 != m_spsParam.vui.aspect_ratio_info_present_flag) {
-            ss << "aspect_ratio_idc: " << m_spsParam.vui.aspect_ratio_idc << std::endl;
+    ss << "hrd_nal -------------------" << std::endl;
+    ss << "cpb_cnt_minus1: " << m_spsParam.vui.hrd_nal.cpb_cnt_minus1 << std::endl;
+    ss << "bit_rate_scale: " << static_cast<int>(m_spsParam.vui.hrd_nal.bit_rate_scale) << std::endl;
+    ss << "cpb_size_scale: " << static_cast<int>(m_spsParam.vui.hrd_nal.cpb_size_scale) << std::endl;
 
-            if(Common::SAR_EXTEND == m_spsParam.vui.aspect_ratio_idc) {
-                ss << "sar_width: " << m_spsParam.vui.sar_width << std::endl;
-                ss << "sar_height: " << m_spsParam.vui.sar_height << std::endl;
-            }
-        }
-
-        ss << "overscan_info_present_flag: " << static_cast<int>(m_spsParam.vui.overscan_info_present_flag) << std::endl;
-
-        if (0 != m_spsParam.vui.overscan_info_present_flag) {
-            ss << "overscan_appropriate_flag: " << static_cast<int>(m_spsParam.vui.overscan_appropriate_flag) << std::endl;
-        }
-
-        ss << "video_signal_type_present_flag: " << static_cast<int>(m_spsParam.vui.video_signal_type_present_flag) << std::endl;
-
-        if (0 != m_spsParam.vui.video_signal_type_present_flag) {
-            ss << "video_format: " << m_spsParam.vui.video_format << std::endl;
-            ss << "video_full_range_flag: " << static_cast<int>(m_spsParam.vui.video_full_range_flag) << std::endl;
-            ss << "colour_description_present_flag: " << static_cast<int>(m_spsParam.vui.colour_description_present_flag) << std::endl;
-
-            if (0 != m_spsParam.vui.colour_description_present_flag) {
-                ss << "colour_primaries: " << m_spsParam.vui.colour_primaries << std::endl;
-                ss << "transfer_characteristics: " << m_spsParam.vui.transfer_characteristics << std::endl;
-                ss << "matrix_coefficients: " << m_spsParam.vui.matrix_coefficients << std::endl;
-            }
-        }
-
-        ss << "chroma_loc_info_present_flag: " << static_cast<int>(m_spsParam.vui.chroma_loc_info_present_flag) << std::endl;
-
-        if (0 != m_spsParam.vui.chroma_loc_info_present_flag) {
-            ss << "chroma_sample_loc_type_top_field: " << m_spsParam.vui.chroma_sample_loc_type_top_field << std::endl;
-            ss << "chroma_sample_loc_type_bottom_field: " << m_spsParam.vui.chroma_sample_loc_type_bottom_field << std::endl;
-        }
-
-        ss << "timing_info_present_flag: " << static_cast<int>(m_spsParam.vui.timing_info_present_flag) << std::endl;
-
-        if (0 != m_spsParam.vui.timing_info_present_flag) {
-            ss << "num_units_in_tick: " << m_spsParam.vui.num_units_in_tick << std::endl;
-            ss << "time_scale: " << m_spsParam.vui.time_scale << std::endl;
-            ss << "fixed_frame_rate_flag: " << static_cast<int>(m_spsParam.vui.fixed_frame_rate_flag) << std::endl;
-        }
-
-        ss << "nal_hrd_parameters_present_flag: " << static_cast<int>(m_spsParam.vui.nal_hrd_parameters_present_flag) << std::endl;
-
-        if (0 != m_spsParam.vui.nal_hrd_parameters_present_flag) {
-            ss << "hrd_nal -------------------" << std::endl;
-            ss << "cpb_cnt_minus1: " << m_spsParam.vui.hrd_nal.cpb_cnt_minus1 << std::endl;
-            ss << "bit_rate_scale: " << static_cast<int>(m_spsParam.vui.hrd_nal.bit_rate_scale) << std::endl;
-            ss << "cpb_size_scale: " << static_cast<int>(m_spsParam.vui.hrd_nal.cpb_size_scale) << std::endl;
-
-            ss << "bit_rate_value_minus1: ";
-            for (unsigned int idx : m_spsParam.vui.hrd_nal.bit_rate_value_minus1) {
-                ss << idx << " ";
-            }
-            ss << std::endl;
-
-            ss << "cpb_size_value_minus1: ";
-            for (unsigned int idx : m_spsParam.vui.hrd_nal.cpb_size_value_minus1) {
-                ss << idx << " ";
-            }
-            ss << std::endl;
-
-            ss << "cbr_flag: ";
-            for (unsigned char idx : m_spsParam.vui.hrd_nal.cbr_flag) {
-                ss << static_cast<int>(idx) << " ";
-            }
-            ss << std::endl;
-
-            ss << "initial_cpb_removal_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_nal.initial_cpb_removal_delay_length_minus1) << std::endl;
-            ss << "cpb_removal_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_nal.cpb_removal_delay_length_minus1) << std::endl;
-            ss << "dpb_output_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_nal.dpb_output_delay_length_minus1) << std::endl;
-            ss << "time_offset_length: " << static_cast<int>(m_spsParam.vui.hrd_nal.time_offset_length) << std::endl;
-        }
-
-        ss << "vcl_hrd_parameters_present_flag: " << static_cast<int>(m_spsParam.vui.vcl_hrd_parameters_present_flag) << std::endl;
-
-        if (0 != m_spsParam.vui.vcl_hrd_parameters_present_flag) {
-            ss << "hrd_vcl -------------------" << std::endl;
-            ss << "cpb_cnt_minus1: " << m_spsParam.vui.hrd_vcl.cpb_cnt_minus1 << std::endl;
-            ss << "bit_rate_scale: " << static_cast<int>(m_spsParam.vui.hrd_vcl.bit_rate_scale) << std::endl;
-            ss << "cpb_size_scale: " << static_cast<int>(m_spsParam.vui.hrd_vcl.cpb_size_scale) << std::endl;
-
-            ss << "bit_rate_value_minus1: ";
-            for (unsigned int idx : m_spsParam.vui.hrd_vcl.bit_rate_value_minus1) {
-                ss << idx << " ";
-            }
-            ss << std::endl;
-
-            ss << "cpb_size_value_minus1: ";
-            for (unsigned int idx : m_spsParam.vui.hrd_vcl.cpb_size_value_minus1) {
-                ss << idx << " ";
-            }
-            ss << std::endl;
-
-            ss << "cbr_flag: ";
-            for (unsigned char idx : m_spsParam.vui.hrd_vcl.cbr_flag) {
-                ss << static_cast<int>(idx) << " ";
-            }
-            ss << std::endl;
-
-            ss << "initial_cpb_removal_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_vcl.initial_cpb_removal_delay_length_minus1) << std::endl;
-            ss << "cpb_removal_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_vcl.cpb_removal_delay_length_minus1) << std::endl;
-            ss << "dpb_output_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_vcl.dpb_output_delay_length_minus1) << std::endl;
-            ss << "time_offset_length: " << static_cast<int>(m_spsParam.vui.hrd_vcl.time_offset_length) << std::endl;
-        }
-
-        if(0 != m_spsParam.vui.nal_hrd_parameters_present_flag || 0 != m_spsParam.vui.vcl_hrd_parameters_present_flag) {
-            ss << "low_delay_hrd_flag: " << static_cast<int>(m_spsParam.vui.low_delay_hrd_flag) << std::endl;
-        }
-
-        ss << "pic_struct_present_flag: " << static_cast<int>(m_spsParam.vui.pic_struct_present_flag) << std::endl;
-        ss << "bitstream_restriction_flag: " << static_cast<int>(m_spsParam.vui.bitstream_restriction_flag) << std::endl;
-
-        if (0 != m_spsParam.vui.bitstream_restriction_flag) {
-            ss << "motion_vectors_over_pic_boundaries_flag: " << static_cast<int>(m_spsParam.vui.motion_vectors_over_pic_boundaries_flag) << std::endl;
-            ss << "max_bytes_per_pic_denom: " << m_spsParam.vui.max_bytes_per_pic_denom << std::endl;
-            ss << "max_bits_per_mb_denom: " << m_spsParam.vui.max_bits_per_mb_denom << std::endl;
-            ss << "log2_max_mv_length_horizontal: " << m_spsParam.vui.log2_max_mv_length_horizontal << std::endl;
-            ss << "log2_max_mv_length_vertical: " << m_spsParam.vui.log2_max_mv_length_vertical << std::endl;
-            ss << "num_reorder_frames: " << m_spsParam.vui.num_reorder_frames << std::endl;
-            ss << "max_dec_frame_buffering: " << m_spsParam.vui.max_dec_frame_buffering << std::endl;
-        }
+    ss << "bit_rate_value_minus1: ";
+    for (unsigned int idx : m_spsParam.vui.hrd_nal.bit_rate_value_minus1) {
+        ss << idx << " ";
     }
+    ss << std::endl;
+
+    ss << "cpb_size_value_minus1: ";
+    for (unsigned int idx : m_spsParam.vui.hrd_nal.cpb_size_value_minus1) {
+        ss << idx << " ";
+    }
+    ss << std::endl;
+
+    ss << "cbr_flag: ";
+    for (unsigned char idx : m_spsParam.vui.hrd_nal.cbr_flag) {
+        ss << static_cast<int>(idx) << " ";
+    }
+    ss << std::endl;
+
+    ss << "initial_cpb_removal_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_nal.initial_cpb_removal_delay_length_minus1) << std::endl;
+    ss << "cpb_removal_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_nal.cpb_removal_delay_length_minus1) << std::endl;
+    ss << "dpb_output_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_nal.dpb_output_delay_length_minus1) << std::endl;
+    ss << "time_offset_length: " << static_cast<int>(m_spsParam.vui.hrd_nal.time_offset_length) << std::endl;
+
+    ss << "vcl_hrd_parameters_present_flag: " << static_cast<int>(m_spsParam.vui.vcl_hrd_parameters_present_flag) << std::endl;
+    ss << "hrd_vcl -------------------" << std::endl;
+    ss << "cpb_cnt_minus1: " << m_spsParam.vui.hrd_vcl.cpb_cnt_minus1 << std::endl;
+    ss << "bit_rate_scale: " << static_cast<int>(m_spsParam.vui.hrd_vcl.bit_rate_scale) << std::endl;
+    ss << "cpb_size_scale: " << static_cast<int>(m_spsParam.vui.hrd_vcl.cpb_size_scale) << std::endl;
+
+    ss << "bit_rate_value_minus1: ";
+    for (unsigned int idx : m_spsParam.vui.hrd_vcl.bit_rate_value_minus1) {
+        ss << idx << " ";
+    }
+    ss << std::endl;
+
+    ss << "cpb_size_value_minus1: ";
+    for (unsigned int idx : m_spsParam.vui.hrd_vcl.cpb_size_value_minus1) {
+        ss << idx << " ";
+    }
+    ss << std::endl;
+
+    ss << "cbr_flag: ";
+    for (unsigned char idx : m_spsParam.vui.hrd_vcl.cbr_flag) {
+        ss << static_cast<int>(idx) << " ";
+    }
+    ss << std::endl;
+
+    ss << "initial_cpb_removal_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_vcl.initial_cpb_removal_delay_length_minus1) << std::endl;
+    ss << "cpb_removal_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_vcl.cpb_removal_delay_length_minus1) << std::endl;
+    ss << "dpb_output_delay_length_minus1: " << static_cast<int>(m_spsParam.vui.hrd_vcl.dpb_output_delay_length_minus1) << std::endl;
+    ss << "time_offset_length: " << static_cast<int>(m_spsParam.vui.hrd_vcl.time_offset_length) << std::endl;
+    ss << "low_delay_hrd_flag: " << static_cast<int>(m_spsParam.vui.low_delay_hrd_flag) << std::endl;
+    ss << "pic_struct_present_flag: " << static_cast<int>(m_spsParam.vui.pic_struct_present_flag) << std::endl;
+    ss << "bitstream_restriction_flag: " << static_cast<int>(m_spsParam.vui.bitstream_restriction_flag) << std::endl;
+    ss << "motion_vectors_over_pic_boundaries_flag: " << static_cast<int>(m_spsParam.vui.motion_vectors_over_pic_boundaries_flag) << std::endl;
+    ss << "max_bytes_per_pic_denom: " << m_spsParam.vui.max_bytes_per_pic_denom << std::endl;
+    ss << "max_bits_per_mb_denom: " << m_spsParam.vui.max_bits_per_mb_denom << std::endl;
+    ss << "log2_max_mv_length_horizontal: " << m_spsParam.vui.log2_max_mv_length_horizontal << std::endl;
+    ss << "log2_max_mv_length_vertical: " << m_spsParam.vui.log2_max_mv_length_vertical << std::endl;
+    ss << "num_reorder_frames: " << m_spsParam.vui.num_reorder_frames << std::endl;
+    ss << "max_dec_frame_buffering: " << m_spsParam.vui.max_dec_frame_buffering << std::endl;
 
     return ss.str();
 }

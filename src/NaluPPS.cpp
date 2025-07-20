@@ -11,7 +11,7 @@ namespace AnnexB {
 
 bool NaluPPS::parse(const std::vector<uint8_t>& buffer, const NaluSPS& sps)
 {
-    if (buffer.empty()) {
+    if (buffer.empty() || !sps.m_isValid) {
         std::cerr << "Parse nalu pps error. input param invalid." << std::endl;
         return false;
     }
@@ -113,41 +113,35 @@ std::string NaluPPS::dumpString() const
     ss << "bottom_field_pic_order_in_frame_present_flag: " << static_cast<int>(m_ppsParam.bottom_field_pic_order_in_frame_present_flag) << std::endl;
 
     ss << "num_slice_groups_minus1: " << m_ppsParam.num_slice_groups_minus1 << std::endl;
-    if (m_ppsParam.num_slice_groups_minus1 > 0) {
-        ss << "slice_group_map_type: " << m_ppsParam.slice_group_map_type << std::endl;
-        if (m_ppsParam.slice_group_map_type == 0) {
-            ss << "run_length_minus1: ";
-            for (auto iGroup = 0; iGroup <= m_ppsParam.num_slice_groups_minus1; ++iGroup) {
-                ss << m_ppsParam.run_length_minus1[iGroup] << " ";
-            }
-            ss << std::endl;
-        }
-        else if (m_ppsParam.slice_group_map_type == 2) {
-            ss << "top_left: ";
-            for (auto iGroup = 0; iGroup < m_ppsParam.num_slice_groups_minus1; ++iGroup) {
-                ss << m_ppsParam.top_left[iGroup] << " ";
-            }
-            ss << std::endl;
+    ss << "slice_group_map_type: " << m_ppsParam.slice_group_map_type << std::endl;
 
-            ss << "bottom_right: ";
-            for (auto iGroup = 0; iGroup < m_ppsParam.num_slice_groups_minus1; ++iGroup) {
-                ss << m_ppsParam.bottom_right[iGroup] << " ";
-            }
-            ss << std::endl;
-        }
-        else if (m_ppsParam.slice_group_map_type >= 3 && m_ppsParam.slice_group_map_type <= 5) {
-            ss << "slice_group_change_direction_flag: " << static_cast<int>(m_ppsParam.slice_group_change_direction_flag) << std::endl;
-            ss << "slice_group_change_rate_minus1: " << m_ppsParam.slice_group_change_rate_minus1 << std::endl;
-        }
-        else if (m_ppsParam.slice_group_map_type == 6) {
-            ss << "pic_size_in_map_units_minus1: " << m_ppsParam.pic_size_in_map_units_minus1 << std::endl;
-            ss << "slice_group_id: ";
-            for (auto idx = 0; idx <= m_ppsParam.pic_size_in_map_units_minus1; ++idx) {
-                ss << static_cast<int>(m_ppsParam.slice_group_id[idx]) << " ";
-            }
-            ss << std::endl;
-        }
+    ss << "run_length_minus1: ";
+    for (auto iGroup = 0; iGroup <= m_ppsParam.num_slice_groups_minus1; ++iGroup) {
+        ss << m_ppsParam.run_length_minus1[iGroup] << " ";
     }
+    ss << std::endl;
+
+    ss << "top_left: ";
+    for (auto iGroup = 0; iGroup < m_ppsParam.num_slice_groups_minus1; ++iGroup) {
+        ss << m_ppsParam.top_left[iGroup] << " ";
+    }
+    ss << std::endl;
+
+    ss << "bottom_right: ";
+    for (auto iGroup = 0; iGroup < m_ppsParam.num_slice_groups_minus1; ++iGroup) {
+        ss << m_ppsParam.bottom_right[iGroup] << " ";
+    }
+    ss << std::endl;
+
+    ss << "slice_group_change_direction_flag: " << static_cast<int>(m_ppsParam.slice_group_change_direction_flag) << std::endl;
+    ss << "slice_group_change_rate_minus1: " << m_ppsParam.slice_group_change_rate_minus1 << std::endl;
+
+    ss << "pic_size_in_map_units_minus1: " << m_ppsParam.pic_size_in_map_units_minus1 << std::endl;
+    ss << "slice_group_id: ";
+    for (auto idx = 0; idx <= m_ppsParam.pic_size_in_map_units_minus1; ++idx) {
+        ss << static_cast<int>(m_ppsParam.slice_group_id[idx]) << " ";
+    }
+    ss << std::endl;
 
     ss << "num_ref_idx_l0_default_active_minus1: " << m_ppsParam.num_ref_idx_l0_default_active_minus1 << std::endl;
     ss << "num_ref_idx_l1_default_active_minus1: " << m_ppsParam.num_ref_idx_l1_default_active_minus1 << std::endl;
@@ -166,41 +160,39 @@ std::string NaluPPS::dumpString() const
     ss << "transform_8x8_mode_flag: " << static_cast<int>(m_ppsParam.transform_8x8_mode_flag) << std::endl;
     ss << "pic_scaling_matrix_present_flag: " << static_cast<int>(m_ppsParam.pic_scaling_matrix_present_flag) << std::endl;
 
-    if (0 != m_ppsParam.pic_scaling_matrix_present_flag) {
-        ss << "pic_scaling_list_present_flag: ";
-        for (int i = 0; i < 12; i++) {
-            ss << static_cast<int>(m_ppsParam.pic_scaling_list_present_flag[i]) << " ";
-        }
-        ss << std::endl;
+    ss << "pic_scaling_list_present_flag: ";
+    for (unsigned char val : m_ppsParam.pic_scaling_list_present_flag) {
+        ss << static_cast<int>(val) << " ";
+    }
+    ss << std::endl;
 
-        ss << "scaling_list_4x4: " << std::endl;
-        for (const auto& idx : m_ppsParam.scaling_list_4x4) {
-            for (int jdx : idx) {
-                ss << jdx << " ";
-            }
-            ss << std::endl;
-        }
-
-        ss << "use_default_scaling_matrix_4x4_flag: ";
-        for (int idx : m_ppsParam.use_default_scaling_matrix_4x4_flag) {
-            ss << idx << " ";
-        }
-        ss << std::endl;
-
-        ss << "scaling_list_8x8: " << std::endl;
-        for (const auto& idx : m_ppsParam.scaling_list_8x8) {
-            for (int jdx : idx) {
-                ss << jdx << " ";
-            }
-            ss << std::endl;
-        }
-
-        ss << "use_default_scaling_matrix_8x8_flag: ";
-        for (int idx : m_ppsParam.use_default_scaling_matrix_8x8_flag) {
-            ss << idx << " ";
+    ss << "scaling_list_4x4: " << std::endl;
+    for (const auto& idx : m_ppsParam.scaling_list_4x4) {
+        for (int jdx : idx) {
+            ss << jdx << " ";
         }
         ss << std::endl;
     }
+
+    ss << "use_default_scaling_matrix_4x4_flag: ";
+    for (int idx : m_ppsParam.use_default_scaling_matrix_4x4_flag) {
+        ss << idx << " ";
+    }
+    ss << std::endl;
+
+    ss << "scaling_list_8x8: " << std::endl;
+    for (const auto& idx : m_ppsParam.scaling_list_8x8) {
+        for (int jdx : idx) {
+            ss << jdx << " ";
+        }
+        ss << std::endl;
+    }
+
+    ss << "use_default_scaling_matrix_8x8_flag: ";
+    for (int idx : m_ppsParam.use_default_scaling_matrix_8x8_flag) {
+        ss << idx << " ";
+    }
+    ss << std::endl;
 
     ss << "second_chroma_qp_index_offset: " << m_ppsParam.second_chroma_qp_index_offset << std::endl;
 

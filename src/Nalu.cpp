@@ -22,7 +22,11 @@ static std::map<uint8_t, std::string> NaluTypeMap = {
     {0x0c, "Filler data"},
     {0x0d, "SPSExt"},
     {0x0e, "Prefix NAL unit"},
-    {0x0f, "Subset SPS"}
+    {0x0f, "Subset SPS"},
+    {0x10, "DepthParamSet"},
+    {0x13, "AuxiliarySlice"},
+    {0x14, "CodedSliceExt"},
+    {0x15, "CodedSliceExt2"}
 };
 
 static std::string GetNaluTypeStr(uint8_t naluType) {
