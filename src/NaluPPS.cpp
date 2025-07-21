@@ -1,3 +1,4 @@
+#include <cmath>
 #include <sstream>
 #include <iostream>
 #include "Utils/NaluHelper.h"
@@ -54,7 +55,12 @@ bool NaluPPS::parse(const std::vector<uint8_t>& buffer, const NaluSPS& sps)
         else if (6 == m_ppsParam.slice_group_map_type) {
             m_ppsParam.pic_size_in_map_units_minus1 = ns.readUev();
             for (auto idx = 0; idx <= m_ppsParam.pic_size_in_map_units_minus1; ++idx) {
-                m_ppsParam.slice_group_id[idx] = ns.readUev();
+                /**
+                 * 7.4.2.2 Picture parameter set RBSP semantics
+                * The length of the slice_group_id[ i ] syntax element is Ceil( Log2( num_slice_groups_minus1 + 1 ) ) bits.
+                 */
+                std::size_t bitLen = ceil(log2(static_cast<double>(m_ppsParam.num_slice_groups_minus1) + 1));
+                m_ppsParam.slice_group_id[idx] = ns.readNBits(bitLen);
             }
         }
     }
