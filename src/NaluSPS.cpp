@@ -23,6 +23,7 @@ bool NaluSPS::parse(const std::vector<uint8_t>& buffer) {
         return false;
     }
 
+    m_spsParam = Common::SPSParam_dt();
     NaluStream ns(buffer.data(), buffer.size());
 
     // 读取nalu类型
@@ -67,22 +68,21 @@ bool NaluSPS::parse(const std::vector<uint8_t>& buffer) {
 
         // seq_scaling_matrix_present_flag
         m_spsParam.seq_scaling_matrix_present_flag = ns.readOneBit();
-
         if (0 != m_spsParam.seq_scaling_matrix_present_flag) {
-            for (int idx = 0; idx < ((3 != m_spsParam.chroma_format_idc) ? 8 : 12); ++idx) {
+            int scalingCycle = (3 != m_spsParam.chroma_format_idc ? 8 : 12);
+            for (int idx = 0; idx < scalingCycle; ++idx) {
                 // seq_scaling_list_present_flag
-                m_spsParam.seq_scaling_list_present_flag[idx] = ns.readUev();
-
+                m_spsParam.seq_scaling_list_present_flag[idx] = ns.readOneBit();
                 if (0 != m_spsParam.seq_scaling_list_present_flag[idx]) {
                     if (idx < 6) {
                         // ScalingList4x4/UseDefaultScalingMatrix4x4Flag
                         NaluHelper::ParseScalingList(ns, m_spsParam.scaling_list_4x4[idx], 16,
-                            &(m_spsParam.use_default_scaling_matrix_4x4_flag[idx]));
+                            m_spsParam.use_default_scaling_matrix_4x4_flag[idx]);
                     }
                     else {
                         // ScalingList8x8/UseDefaultScalingMatrix8x8Flag
                         NaluHelper::ParseScalingList(ns, m_spsParam.scaling_list_8x8[idx - 6], 64,
-                            &(m_spsParam.use_default_scaling_matrix_8x8_flag[idx - 6]));
+                            m_spsParam.use_default_scaling_matrix_8x8_flag[idx - 6]);
                     }
                 }
             }

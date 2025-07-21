@@ -16,6 +16,7 @@ bool NaluPPS::parse(const std::vector<uint8_t>& buffer, const NaluSPS& sps)
         return false;
     }
 
+    m_ppsParam = Common::PPSParam_dt();
     NaluStream ns(buffer.data(), buffer.size());
 
     // 读取nalu类型
@@ -82,11 +83,11 @@ bool NaluPPS::parse(const std::vector<uint8_t>& buffer, const NaluSPS& sps)
                 if (0 != m_ppsParam.pic_scaling_list_present_flag[idx]) {
                     if (idx < 6) {
                         NaluHelper::ParseScalingList(ns, m_ppsParam.scaling_list_4x4[idx], 16,
-                            &(m_ppsParam.use_default_scaling_matrix_4x4_flag[idx]));
+                            m_ppsParam.use_default_scaling_matrix_4x4_flag[idx]);
                     }
                     else {
                         NaluHelper::ParseScalingList(ns, m_ppsParam.scaling_list_8x8[idx - 6], 64,
-                            &(m_ppsParam.use_default_scaling_matrix_8x8_flag[idx - 6]));
+                            m_ppsParam.use_default_scaling_matrix_8x8_flag[idx - 6]);
                     }
                 }
             }

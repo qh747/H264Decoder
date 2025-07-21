@@ -3,7 +3,7 @@
 
 namespace Utils {
 
-void NaluHelper::ParseScalingList(Stream::NaluStream& ns, int* scalingList, int sizeOfScalingList, int* useDefaultScalingMatrixFlag) {
+void NaluHelper::ParseScalingList(Stream::NaluStream& ns, int* scalingList, int sizeOfScalingList, int& useDefaultScalingMatrixFlag) {
     int lastScale = 8;
     int nextScale = 8;
 
@@ -11,10 +11,10 @@ void NaluHelper::ParseScalingList(Stream::NaluStream& ns, int* scalingList, int 
         if (nextScale != 0) {
             int deltaScale = ns.readSev();
             nextScale = (lastScale + deltaScale + 256) % 256;
-            useDefaultScalingMatrixFlag[0] = (j == 0 && nextScale == 0);
+            useDefaultScalingMatrixFlag = (j == 0 && nextScale == 0);
         }
 
-        scalingList[j] = (nextScale == 0) ? lastScale : nextScale;
+        scalingList[j] = (nextScale == 0 ? lastScale : nextScale);
         lastScale = scalingList[j];
     }
 }

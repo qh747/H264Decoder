@@ -11,7 +11,7 @@ namespace Utils {
 class NaluHelper {
 public:
     // ITU-T H.264 (V15) 7.3.2.1.1.1
-    static void ParseScalingList(Stream::NaluStream& ns, int* scalingList, int sizeOfScalingList, int* useDefaultScalingMatrixFlag);
+    static void ParseScalingList(Stream::NaluStream& ns, int* scalingList, int sizeOfScalingList, int& useDefaultScalingMatrixFlag);
 
     // ITU-T H.264 (V15) E.1.2 HRD parameters syntax
     static void ParseHrdParam(Stream::NaluStream& ns, Common::SPSVuiHrdParam_dt& hrdParam);

@@ -9,7 +9,7 @@ using namespace AnnexB;
 
 // 测试Nalu SPS解析函数
 void FuncTestSPS() {
-    FileReader reader("../../resource/demo_video_176x144_baseline.h264");
+    FileReader reader("../../resource/720p.h264");
     if (!reader.open()) {
         std::cerr << "Open file error." << std::endl;
         return;

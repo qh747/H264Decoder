@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iomanip>
 #include <sstream>
 #include <iostream>
@@ -17,6 +18,7 @@ bool NaluSliceHeader::parse(const std::vector<uint8_t>& buffer, const NaluSPS& s
         return false;
     }
 
+    m_headParam = Common::SliceHeadParam_dt();
     NaluStream ns(buffer.data(), buffer.size());
 
     // 读取nalu类型
@@ -29,19 +31,20 @@ bool NaluSliceHeader::parse(const std::vector<uint8_t>& buffer, const NaluSPS& s
     auto nal_ref_idc = static_cast<int>((head >> 5) & 3);
 
     m_headParam.first_mb_in_slice = ns.readUev();
-    m_headParam.slice_type = ns.readNBits(5);
+    m_headParam.slice_type = ns.readUev();
     m_headParam.pic_parameter_set_id = ns.readUev();
 
     if (1 == sps.m_spsParam.separate_colour_plane_flag) {
         m_headParam.colour_plane_id = ns.readNBits(2);
     }
 
-    m_headParam.frame_num = ns.readUev();
+    // 7.4.3 Slice header semantics
+    m_headParam.frame_num = ns.readNBits(sps.m_spsParam.log2_max_frame_num_minus4 + 4);
 
     if (0 == sps.m_spsParam.frame_mbs_only_flag) {
-        m_headParam.field_pic_flag = ns.readNBits(1);
+        m_headParam.field_pic_flag = ns.readOneBit();
         if (1 == m_headParam.field_pic_flag) {
-            m_headParam.bottom_field_flag = ns.readNBits(1);
+            m_headParam.bottom_field_flag = ns.readOneBit();
         }
     }
 
@@ -50,7 +53,8 @@ bool NaluSliceHeader::parse(const std::vector<uint8_t>& buffer, const NaluSPS& s
     }
 
     if (0 == sps.m_spsParam.pic_order_cnt_type) {
-        m_headParam.pic_order_cnt_lsb = ns.readUev();
+        // 7.4.3 Slice header semantics
+        m_headParam.pic_order_cnt_lsb = ns.readNBits(sps.m_spsParam.log2_max_frame_num_minus4 + 4);
         if (0 != pps.m_ppsParam.bottom_field_pic_order_in_frame_present_flag && 0 == m_headParam.field_pic_flag) {
             m_headParam.delta_pic_order_cnt_bottom = ns.readSev();
         }
@@ -131,9 +135,27 @@ bool NaluSliceHeader::parse(const std::vector<uint8_t>& buffer, const NaluSPS& s
     }
 
     if (pps.m_ppsParam.num_slice_groups_minus1 > 0 && pps.m_ppsParam.slice_group_map_type >= 3 && pps.m_ppsParam.slice_group_map_type <= 5) {
-        m_headParam.slice_group_change_cycle = ns.readUev();
+        /**
+         * 7.4.2.1.1 Sequence parameter set data semantics
+         * slice_group_change_cycle = Ceil(Log2(PicSizeInMapUnits / SliceGroupChangeRate + 1))
+         *
+         * PicSizeInMapUnits = PicWidthInMbs * PicHeightInMapUnits
+         *     PicWidthInMbs = pic_width_in_mbs_minus1 + 1
+         *     PicHeightInMapUnits = pic_height_in_map_units_minus1 + 1
+         *
+         * SliceGroupChangeRate = slice_group_change_rate_minus1 + 1
+         *
+         * Log2(): 求形参v是2的多少次幂
+         * Ceil(): 向上取整
+         */
+
+        uint32_t picSizeInMapUnits = (sps.m_spsParam.pic_width_in_mbs_minus1 + 1) * (sps.m_spsParam.pic_height_in_map_units_minus1 + 1);
+        uint32_t sliceGroupChangeRate = (pps.m_ppsParam.slice_group_change_rate_minus1 + 1);
+        double bitsLen = ceil(log2(static_cast<double>(picSizeInMapUnits) / static_cast<double>(sliceGroupChangeRate) + 1));
+        m_headParam.slice_group_change_cycle = ns.readNBits(static_cast<std::size_t>(bitsLen));
     }
 
+    m_isValid = true;
     return true;
 }
 

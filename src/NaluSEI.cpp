@@ -18,6 +18,7 @@ bool NaluSEI::parse(const std::vector<uint8_t>& buffer) {
         return false;
     }
 
+    m_seiParam = Common::SEIParam_dt();
     NaluStream ns(buffer.data(), buffer.size());
     int readCount = 0;
 

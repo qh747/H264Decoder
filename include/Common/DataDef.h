@@ -359,8 +359,8 @@ typedef struct SLICE_HEADER_PARAMETER_DATA_TYPE {
     uint8_t                 bottom_field_flag { 0 };
     uint32_t                idr_pic_id { 0 };
     uint32_t                pic_order_cnt_lsb { 0 };
-    int16_t                 delta_pic_order_cnt_bottom { 0 };
-    int16_t                 delta_pic_order_cnt[2] { 0 };
+    int32_t                 delta_pic_order_cnt_bottom { 0 };
+    int32_t                 delta_pic_order_cnt[2] { 0 };
     uint32_t                redundant_pic_cnt { 0 };
     uint8_t                 direct_spatial_mv_pred_flag { 0 };
     uint8_t                 num_ref_idx_active_override_flag { 0 };
